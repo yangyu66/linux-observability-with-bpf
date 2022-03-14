@@ -6,6 +6,13 @@
 - All the dependencies are already handled if you followed the instructions in the main [README.md](/README.md).
 
 In the machine:
+read:
+https://github.com/bpftools/linux-observability-with-bpf/issues/48
+download source code and copy linux-src/include/uapi/linux/bpf.h to replace /usr/include/linux/bpf.h (better to back up first)
+
+https://github.com/bpftools/linux-observability-with-bpf/issues/25
+
+
 
 Enter into this example folder:
 
@@ -16,7 +23,8 @@ cd ~/linux-observability-with-bpf/code/chapter-6/packet-filtering-raw-sockets
 Compile the loader
 
 ```bash
-./build-loader.sh /kernel-src
+./build-loader.sh /usr/src/linux-5.4.100/
+#./build-loader.sh /kernel-src
 ```
 
 It will create a binary file named `loader-bin`
