@@ -1,4 +1,6 @@
-#include "bpf_load.h"
+// #include "bpf_load.h"
+#include <bpf/bpf.h>
+#include <bpf/bpf_load.h>
 #include <stdio.h>
 
 int main(int argc, char **argv) {

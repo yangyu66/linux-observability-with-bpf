@@ -4,15 +4,16 @@ EXECABLE = monitor-exec
 
 BPFCODE = bpf_program
 
-BPFTOOLS = /kernel-src/samples/bpf
+BPFTOOLS = /usr/src/linux-5.4.100/samples/bpf
 BPFLOADER = $(BPFTOOLS)/bpf_load.c
 
-CCINCLUDE += -I/kernel-src/tools/testing/selftests/bpf
+CCINCLUDE += -I/usr/src/linux-5.4.100/tools/testing/selftests/bpf
 
-LOADINCLUDE += -I/kernel-src/samples/bpf
-LOADINCLUDE += -I/kernel-src/tools/lib
-LOADINCLUDE += -I/kernel-src/tools/perf
-LOADINCLUDE += -I/kernel-src/tools/include
+LOADINCLUDE += -I/usr/src/linux-5.4.100/tools/lib/bpf
+LOADINCLUDE += -I/usr/src/linux-5.4.100/tools/lib
+LOADINCLUDE += -I/usr/src/linux-5.4.100/tools/perf
+LOADINCLUDE += -I/usr/src/linux-5.4.100/tools/include
+LOADINCLUDE += -I/usr/src/linux-5.4.100/samples/bpf
 LIBRARY_PATH = -L/usr/local/lib64
 BPFSO = -lbpf
 
@@ -30,7 +31,7 @@ BPFSO = -lbpf
 # See more context at:
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=06f84d1989b7e58d56fa2e448664585749d41221
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fce9501aec6bdda45ef3a5e365a5e0de7de7fe2d
-CFLAGS += $(shell grep -q "define HAVE_ATTR_TEST 1" /kernel-src/tools/perf/perf-sys.h \
+CFLAGS += $(shell grep -q "define HAVE_ATTR_TEST 1" /usr/src/linux-5.4.100/tools/perf/perf-sys.h \
                   && echo "-DHAVE_ATTR_TEST=0")
 
 .PHONY: clean $(CLANG) bpfload build
@@ -41,9 +42,17 @@ clean:
 build: ${BPFCODE.c} ${BPFLOADER}
 	$(CLANG) -O2 -target bpf -c $(BPFCODE:=.c) $(CCINCLUDE) -o ${BPFCODE:=.o}
 
+KERNEL_SRCTREE=/usr/src/linux-5.4.100
+LIBBPF=${KERNEL_SRCTREE}/tools/lib/bpf/libbpf.a
+
 bpfload: build
-	clang $(CFLAGS) -o $(EXECABLE) -lelf $(LOADINCLUDE) $(LIBRARY_PATH) $(BPFSO) \
-        $(BPFLOADER) loader.c
+	clang -o monitor-exec -I${KERNEL_SRCTREE}/tools/lib/bpf/ \
+	-I${KERNEL_SRCTREE}/tools/lib -I${KERNEL_SRCTREE}/tools/include \
+	-I${KERNEL_SRCTREE}/tools/perf -I${KERNEL_SRCTREE}/samples \
+	${KERNEL_SRCTREE}/samples/bpf/bpf_load.c \
+	loader.c "${LIBBPF}" -lelf -DHAVE_ATTR_TEST=0
+#	clang $(CFLAGS) -o $(EXECABLE) -lelf $(LOADINCLUDE) $(LIBRARY_PATH) $(BPFSO) \
+       $(BPFLOADER) loader.c
 
 $(EXECABLE): bpfload
 
