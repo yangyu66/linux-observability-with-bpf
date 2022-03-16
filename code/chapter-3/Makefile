@@ -1,6 +1,6 @@
 CLANG = clang
 
-INCLUDE_PATH += -I/kernel-src/tools/lib/bpf
+INCLUDE_PATH += -I/usr/src/linux-5.4.100/tools/lib/bpf
 
 LIBRARY_PATH = -L/usr/local/lib64
 BPFSO = -lbpf
