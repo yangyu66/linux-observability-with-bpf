@@ -1,6 +1,7 @@
 #include <arpa/inet.h>
 #include <assert.h>
 #include <bpf/bpf.h>
+// #include "bpf_load.h"
 #include <bpf/bpf_load.h>
 #include <bpf/sock_example.h>
 #include <errno.h>
@@ -37,7 +38,7 @@ int main(int argc, char **argv) {
 
   for (i = 0; i < 10; i++) {
     key = IPPROTO_TCP;
-    assert(bpf_map_lookup_elem(map_fd[0], &key, &tcp_cnt) == 0);
+    assert(bpf_map_lookup_elem(map_data[0].fd, &key, &tcp_cnt) == 0);
 
     key = IPPROTO_UDP;
     assert(bpf_map_lookup_elem(map_fd[0], &key, &udp_cnt) == 0);
