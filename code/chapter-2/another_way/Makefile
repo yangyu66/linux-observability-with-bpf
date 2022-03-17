@@ -40,7 +40,8 @@ clean:
 	rm -f *.o *.so $(EXECABLE)
 
 build: ${BPFCODE.c} ${BPFLOADER}
-	$(CLANG) -O2 -target bpf -c $(BPFCODE:=.c) $(CCINCLUDE) -o ${BPFCODE:=.o}
+#	$(CLANG) -I/usr/include/x86_64-linux-gnu -I/usr/src/linux-5.4.100/include -O2 -target bpf -c $(BPFCODE:=.c) $(CCINCLUDE) -o ${BPFCODE:=.o}
+	$(CLANG)  -I/usr/src/linux-5.4.100/include -O2 -target bpf -c $(BPFCODE:=.c) $(CCINCLUDE) -o ${BPFCODE:=.o}
 
 KERNEL_SRCTREE=/usr/src/linux-5.4.100
 LIBBPF=${KERNEL_SRCTREE}/tools/lib/bpf/libbpf.a
