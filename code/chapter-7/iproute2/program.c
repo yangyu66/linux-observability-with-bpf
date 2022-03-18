@@ -8,20 +8,22 @@
 
 SEC("mysection")
 int myprogram(struct xdp_md *ctx) {
-  int ipsize = 0;
+  // https://duo.com/labs/tech-notes/writing-an-xdp-network-filter-with-ebpf
+  
+  int ethsize = 0;
   void *data = (void *)(long)ctx->data;
   void *data_end = (void *)(long)ctx->data_end;
   struct ethhdr *eth = data;
-  struct iphdr *ip;
+  // struct iphdr *ip;
 
-  ipsize = sizeof(*eth);
-  ip = data + ipsize;
-  ipsize += sizeof(struct iphdr);
-  if (data + ipsize > data_end) {
+  ethsize = sizeof(*eth);
+  struct iphdr *ip = data + ethsize;
+  ethsize += sizeof(struct iphdr);
+  if (data + ethsize > data_end) {
     return XDP_DROP;
   }
 
-  if (ip->protocol == IPPROTO_TCP) {
+  if (ip->protocol == IPPROTO_ICMP) {
     return XDP_DROP;
   }
 

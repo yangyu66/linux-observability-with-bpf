@@ -4,7 +4,7 @@ from bcc import BPF
 import time
 import sys
 
-device = "eth1"
+device = "enp0s3"
 b = BPF(src_file="program.c")
 fn = b.load_func("myprogram", BPF.XDP)
 b.attach_xdp(device, fn, 0)
